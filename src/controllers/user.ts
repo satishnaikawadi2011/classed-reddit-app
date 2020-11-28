@@ -68,3 +68,20 @@ export const login = async(req:Request,res:Response) => {
         console.log(err)
     }
 }
+
+
+export const me = async (req:Request,res:Response) => {
+    return res.json({user:res.locals.user})
+}
+
+export const logout = async (req:Request,res:Response) => {
+    res.set('Set-Cookie',cookie.serialize('token','',{
+        httpOnly:true,
+        secure:process.env.NODE_ENV == 'production',
+        path:'/',
+        sameSite:'strict',
+        expires:new Date(0)
+    }))
+
+    res.status(200).json({success:'true'})
+}
