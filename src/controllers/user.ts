@@ -1,8 +1,11 @@
 import { User } from './../entity/User';
 import { isEmailOrUsernameAlreadyExists } from './../utils/CustomValidators';
 import {Request,Response} from 'express';
-import { validate } from 'class-validator';
+import { validate,isEmpty } from 'class-validator';
 import transformClassErrors from '../utils/transformClassErrors';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import cookie from 'cookie'
 
 export const reegisterUser = async(req:Request,res:Response) => {
     const {email,password,username} = req.body
@@ -26,4 +29,42 @@ export const reegisterUser = async(req:Request,res:Response) => {
         console.log(err)
     }
 
+}
+
+
+export const login = async(req:Request,res:Response) => {
+    const {username,password} =  req.body
+    try {
+        let errors:any = {}
+        if(isEmpty(username)) errors.username = 'Username must not be empty.'
+        if(isEmpty(password)) errors.password = 'Password must not be empty.'
+
+        if(Object.keys(errors).length > 0){
+            return res.status(400).json({errors})
+        }
+        const user = await User.findOne({username})
+        if (!user){
+            return res.status(404).json({error:'User not found !'})
+        }
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password)
+
+        if(!isPasswordMatch){
+            return res.status(401).json({error:'Invalid credentials !'})
+        }
+
+        const token = await jwt.sign({username},process.env.JWT_SECRET)
+
+        res.set('Set-Cookie',cookie.serialize('token', token,{
+            httpOnly:true,
+            secure:process.env.NODE_ENV == 'production',
+            path:'/',
+            sameSite:'strict',
+            maxAge:3600
+        }))
+
+        return res.json({user,token}) 
+    } catch (err) {
+        console.log(err)
+    }
 }
