@@ -1,5 +1,6 @@
+import { Post } from './Post';
 import { IsEmail, MinLength } from "class-validator";
-import {Entity as TOEntity, Column,Index,BeforeInsert} from "typeorm";
+import {Entity as TOEntity, Column,Index,BeforeInsert, OneToMany} from "typeorm";
 import bcrypt from 'bcrypt'
 import {Exclude} from 'class-transformer'
 import Entity from './Entity'
@@ -27,6 +28,9 @@ export class User extends Entity {
     @MinLength(6,{message:'Password must be at least 6 characters long'})
     @Column()
     password: string;
+
+    @OneToMany(() => Post, post => post.user)
+    posts:[Post]
 
     @BeforeInsert()
     async hashPassword(){

@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser'
 
 import trim from "./middleware/trim";
 import userRouter from './routes/user'
+import postRouter from './routes/post'
+import subRouter from './routes/subs'
 
 dotenv.config()
 
@@ -18,12 +20,14 @@ app.use(trim)
 app.use(cookieParser())
 
 app.use('/api/user',userRouter)
+app.use('/api/post',postRouter)
+app.use('/api/sub',subRouter)
 
 app.get('/',(req,res) => res.send("Hello world!"))
 
-
-app.listen(5000,async() => {
-    console.log('Server running at http://localhost:5000')
+const PORT = process.env.PORT 
+app.listen(PORT,async() => {
+    console.log(`Server running at http://localhost:${PORT}`)
 
     try {
         await createConnection()

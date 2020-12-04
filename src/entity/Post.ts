@@ -1,6 +1,10 @@
-import {Entity as TOEntity, Column,Index,BeforeInsert} from "typeorm";
+import { Sub } from './Sub';
+import { User } from './User';
+import {Entity as TOEntity, Column,Index,BeforeInsert, ManyToOne, JoinTable, JoinColumn} from "typeorm";
 import {Exclude} from 'class-transformer'
 import Entity from './Entity'
+import makeId from '../utils/makeId';
+import string_to_slug from '../utils/slugify'
 
 @TOEntity("posts")
 export class Post extends Entity {
@@ -25,4 +29,18 @@ export class Post extends Entity {
 
     @Column()
     subName:string
+
+    @ManyToOne(() => User,user => user.posts)
+    @JoinColumn({name:'username',referencedColumnName:'username'})
+    user:User
+
+    @ManyToOne(() => Sub,sub => sub.posts)
+    @JoinColumn({name:'subName',referencedColumnName:'name'})
+    sub:Sub
+
+    @BeforeInsert()
+    makeIdAndSlug(){
+        this.identifier = makeId(7)
+        this.slug = string_to_slug(this.title)
+    }
 }
