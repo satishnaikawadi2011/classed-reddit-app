@@ -1,11 +1,19 @@
 module.exports = {
 	purge    : [
-		'./pages/**/*.js',
-		'./components/**/*.js'
+		'./src/**/*.tsx'
 	],
 	darkMode : false, // or 'media' or 'class'
 	theme    : {
-		extend : {}
+		fontFamily : {
+			body : [
+				'Ubuntu'
+			]
+		},
+		extend     : {
+			spacing : {
+				70 : '17.5rem'
+			}
+		}
 	},
 	variants : {
 		extend : {}

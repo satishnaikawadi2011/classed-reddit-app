@@ -11,7 +11,7 @@ export const isEmailOrUsernameAlreadyExists = async(email:string,username:string
 
     const userUsername = await User.findOne({username:username})
     if (userUsername){
-        errors.email = 'User with this username already exists,try another one.'
+        errors.username = 'User with this username already exists,try another one.'
         isExists = true
     }
 

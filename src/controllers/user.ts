@@ -9,25 +9,33 @@ import cookie from 'cookie'
 
 export const reegisterUser = async(req:Request,res:Response) => {
     const {email,password,username} = req.body
-    const {errors,isExists} = await isEmailOrUsernameAlreadyExists(email,username)
+    let custom_errors = <any>{}
+    if(isEmpty(username)) custom_errors.username = 'Username must not be empty.'
+    if(isEmpty(password)) custom_errors.password = 'Password must not be empty.'
+    if(isEmpty(email)) custom_errors.email = 'Email must not be empty.'
+    if(Object.keys(custom_errors).length > 0){
+        return res.status(400).json({errors:custom_errors})
+    }else{
+        const {errors,isExists} = await isEmailOrUsernameAlreadyExists(email,username)
+        
     if (isExists){
-        res.status(404).json({errors})    
+        return res.status(404).json({errors})    
+     }
     }
-    
     try {
         const user = new User({email,password,username})
         const classErrors = await validate(user)
         if (classErrors.length > 0) {
             const transformedErrors = await transformClassErrors(classErrors)
-            res.status(404).json({errors:transformedErrors})
+            return res.status(404).json({errors:transformedErrors})
         }
 
         await user.save()
 
-        res.status(200).json({user})
+        return res.status(200).json({user})
     } catch (err) {
         console.log(err)
-        res.status(500).json({message:'Something went wrong!'})
+        return res.status(500).json({message:'Something went wrong!'})
     }
 
 }
@@ -45,13 +53,13 @@ export const login = async(req:Request,res:Response) => {
         }
         const user = await User.findOne({username})
         if (!user){
-            return res.status(404).json({error:'User not found !'})
+            return res.status(404).json({errors:{username:'User not found !'}})
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password)
 
         if(!isPasswordMatch){
-            return res.status(401).json({error:'Invalid credentials !'})
+            return res.status(401).json({errors:{password:'Invalid credentials !'}})
         }
 
         const token = await jwt.sign({username},process.env.JWT_SECRET)
