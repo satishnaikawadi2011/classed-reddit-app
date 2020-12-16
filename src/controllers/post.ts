@@ -1,3 +1,4 @@
+import { Comment } from './../entity/Comment';
 import { Sub } from './../entity/Sub';
 import { Post } from './../entity/Post';
 import { Request, Response } from 'express';
@@ -53,6 +54,31 @@ export const getPost = async(req:Request,res:Response) => {
             return res.status(404).json({error:'Post not found !'})
         }
         res.json(post)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
+    }
+}
+
+export const commentOnPost = async(req:Request,res:Response) => {
+
+    try {
+        const {identifier,slug} = req.params
+        const {body} = req.body
+        const post =  await Post.findOne({
+            identifier,slug
+        });
+        if(!post){
+            return res.status(404).json({error:'Post not found !'})
+        }
+        const comment = new Comment({
+            user:res.locals.user,
+            body,
+            post
+        })
+
+        await comment.save()
+        return res.status(201).json(comment)
     } catch (err) {
         console.log(err)
         res.status(500).json({message:'Something went wrong!'})
