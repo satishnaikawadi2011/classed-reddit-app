@@ -1,10 +1,11 @@
 import { Sub } from './Sub';
 import { User } from './User';
-import {Entity as TOEntity, Column,Index,BeforeInsert, ManyToOne, JoinTable, JoinColumn} from "typeorm";
+import {Entity as TOEntity, Column,Index,BeforeInsert, ManyToOne, JoinTable, JoinColumn, OneToMany} from "typeorm";
 import {Exclude} from 'class-transformer'
 import Entity from './Entity'
 import makeId from '../utils/makeId';
 import string_to_slug from '../utils/slugify'
+import { Comment } from './Comment';
 
 @TOEntity("posts")
 export class Post extends Entity {
@@ -37,6 +38,9 @@ export class Post extends Entity {
     @ManyToOne(() => Sub,sub => sub.posts)
     @JoinColumn({name:'subName',referencedColumnName:'name'})
     sub:Sub
+
+    @OneToMany(() => Comment,comment => comment.post)
+    comments:Comment[]
 
     @BeforeInsert()
     makeIdAndSlug(){
