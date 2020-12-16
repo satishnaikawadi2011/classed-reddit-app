@@ -4,21 +4,24 @@ import auth from '../middleware/auth'
 
 const router = Router()
 
-// POST 
-// Public
+//@method  POST
+//@access  Public
+//@desc    register as a new user
 router.post('/register',reegisterUser)
 
-// POST
-// Public
+//@method  POST
+//@access  Public
+//@desc    login to the app
 router.post('/login',login)
 
-// GET
-// Private
+//@method  GET
+//@access  Private
+//@desc    get current user info
 router.get('/me',auth,me)
 
-
-// GET
-// Private
+//@method  GET
+//@access  Private
+//@desc    logout from the app
 router.get('/logout',auth,logout)
 
 export default router

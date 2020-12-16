@@ -25,3 +25,36 @@ export const createPost = async(req:Request,res:Response) => {
         res.status(500).json({message:'Something went wrong!'})
     }
 }
+
+
+export const getPosts = async(req:Request,res:Response) => {
+
+    try {
+
+        const posts =  await Post.find({
+            order:{createdAt:'DESC'}
+        });
+
+        res.json(posts)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
+    }
+}
+
+export const getPost = async(req:Request,res:Response) => {
+
+    try {
+        const {identifier,slug} = req.params
+        const post =  await Post.findOne({
+            identifier,slug
+        },{relations:['sub']});
+        if(!post){
+            return res.status(404).json({error:'Post not found !'})
+        }
+        res.json(post)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
+    }
+}

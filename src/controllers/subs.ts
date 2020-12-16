@@ -32,5 +32,6 @@ export const createSub = async(req:Request,res:Response) => {
         res.json({sub:newSub})
     } catch (err) {
         console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
     }
 }

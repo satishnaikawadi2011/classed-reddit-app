@@ -4,8 +4,9 @@ import auth from '../middleware/auth'
 
 const router = Router()
 
-// Post
-// Private
+//@method  POST
+//@access  Private
+//@desc    create a new sub
 router.post('/create',auth,createSub)
 
 

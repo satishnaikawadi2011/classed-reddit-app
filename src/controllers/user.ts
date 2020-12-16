@@ -27,6 +27,7 @@ export const reegisterUser = async(req:Request,res:Response) => {
         res.status(200).json({user})
     } catch (err) {
         console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
     }
 
 }
@@ -66,6 +67,7 @@ export const login = async(req:Request,res:Response) => {
         return res.json({user,token}) 
     } catch (err) {
         console.log(err)
+        res.status(500).json({message:'Something went wrong!'})
     }
 }
 
